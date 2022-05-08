@@ -124,7 +124,7 @@ int main()
 
 	// Yeet it leftwards to collide with the smaller boxes
 	box.body->ApplyForceToCenter(b2Vec2(100000, 10), false);
-	
+	//just a comment for idea
 
 	/** GAME LOOP **/
 	while (w.isOpen())
@@ -142,7 +142,6 @@ int main()
 				
 			}
 			
-		}
 		// Update the world, standard arguments
 		world.Step(1 / 60.f, 6, 3);
 		// Render everything
