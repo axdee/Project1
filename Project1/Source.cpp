@@ -124,7 +124,7 @@ int main()
 
 	// Yeet it leftwards to collide with the smaller boxes
 	box.body->ApplyForceToCenter(b2Vec2(100000, 10), false);
-	//boxs.body->ApplyForceToCenter(b2Vec2(-100000, 10), false);
+	
 
 	/** GAME LOOP **/
 	while (w.isOpen())
