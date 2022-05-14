@@ -5,6 +5,7 @@
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 
+
 // Pixels per meter. Box2D uses metric units, so we need to define a conversion
 #define PPM 30.0F
 // SFML uses degrees for angles while Box2D uses radians
@@ -67,6 +68,20 @@ Box createGround(float x, float y, float width, float height, sf::Color color)
 
 void render(sf::RenderWindow& w, std::vector<Box>& boxes)
 {
+	sf::Text text;
+
+	sf::Font font;
+	font.loadFromFile("shortbaby.ttf");
+
+	text.setFont(font);
+
+	text.setString("Tap to Start");
+
+	text.setCharacterSize(50);
+
+	text.setFillColor(sf::Color::Blue);
+
+	text.setPosition(265.f, 100.f);
 	w.clear();
 	for (const auto& box : boxes)
 	{
@@ -90,6 +105,7 @@ void render(sf::RenderWindow& w, std::vector<Box>& boxes)
 		rect.setFillColor(box.color);
 		w.draw(rect);
 	}
+	w.draw(text);
 	w.display();
 }
 
@@ -97,39 +113,60 @@ int main()
 {
 	// Setup SFML window
 	
-	sf::RenderWindow w(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML + Box2D",sf::Style::Close | sf::Style::Resize);
+	sf::RenderWindow w(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML + Box2D", sf::Style::Close);
 	w.setFramerateLimit(60);
-
+	int count = 0;
+	
 	// Container to hold all the boxes we create
 	std::vector<Box> boxes;
-	
 
 	// Generate ground
-	boxes.push_back(createGround(350, 50, 500, 100, sf::Color::Green));
+	boxes.push_back(createGround(300, 20, 1000, 100, sf::Color::Magenta));
+
 
 	// Generate a lot of boxes
-	for (int i = 0; i < 300; i++)
+	for (int i = 0; i < 250; i++)
 	{
 		// Starting positions are randomly generated: x between 50 and 550, y between 70 and 550
-		auto&& box = createBox(50 + (std::rand() % (550 - 50 + 1)), 70 + (std::rand() % (550 - 70 + 1)), 24, 24, 1.f, 0.7f, sf::Color::White);
+		auto&& box = createBox(150 + (std::rand() % (550 - 50 + 1)), 70 + (std::rand() % (550 - 70 + 1)), 15, 15, 1.f, 0.4f, sf::Color::Red);
 		boxes.push_back(box);
 	}
+	/*if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	{
+		auto&& box = createBox((float)localPosition.x, (float)localPosition.y, 15.f, 15.f, 1.f, 0.7f, sf::Color::Red);
+		boxes.push_back(box);
+	}*/
+
 
 	// Create a big blue box
-	auto&& box = createBox(70, 200, 64, 64, 10.f, 0.7f, sf::Color::Blue);
-	boxes.push_back(box);
-
-	//auto&& boxs = createBox(700, 200, 64, 64, 10.f, 0.7f, sf::Color::Blue);
+	//auto&& box = createBox(70, 200, 64, 64, 10.f, 0.7f, sf::Color::Blue);
 	//boxes.push_back(box);
 
+	//auto&& boxs = createBox(700, 200, 64, 64, 10.f, 0.7f, sf::Color::Blue);
+	//boxes.push_back(boxs);
+
 	// Yeet it leftwards to collide with the smaller boxes
-	box.body->ApplyForceToCenter(b2Vec2(100000, 10), false);
+	//box.body->ApplyForceToCenter(b2Vec2(100000, 10), false);
+	//boxs.body->ApplyForceToCenter(b2Vec2(-100000, 10), false);
 	//just a comment for idea
 
 	/** GAME LOOP **/
 	while (w.isOpen())
 	{
 		sf::Event evnt;
+		
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		{
+
+			float localPositionx = sf::Mouse::getPosition(w).x;
+			float localPositiony = sf::Mouse::getPosition(w).y;
+			
+			auto&& box = createBox(localPositionx, WINDOW_HEIGHT - localPositiony, 15.f, 15.f, 1.f, 0.7f, sf::Color::Red);
+			boxes.push_back(box);
+
+		}
+		
+		
 		while (w.pollEvent(evnt))
 		{
 			switch (evnt.type) {
@@ -139,14 +176,20 @@ int main()
 				if (evnt.text.unicode < 128) {
 					printf("%c", evnt.text.unicode);
 				}
-				
+
 			}
-			
+
+			}
+		
 		// Update the world, standard arguments
 		world.Step(1 / 60.f, 6, 3);
+		
 		// Render everything
 		render(w, boxes);
 		
+
+		
 	}
+
 	return 0;
 }
